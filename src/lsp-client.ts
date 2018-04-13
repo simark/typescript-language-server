@@ -13,6 +13,7 @@ export interface LspClient {
     logMessage(args: lsp.LogMessageParams): void;
     applyWorkspaceEdit(args: lsp.ApplyWorkspaceEditParams): Promise<lsp.ApplyWorkspaceEditResponse>;
     telemetry(args: any): void;
+    registerCapability(args: lsp.RegistrationParams): void;
 }
 
 export class LspClientImpl implements LspClient {
@@ -33,6 +34,10 @@ export class LspClientImpl implements LspClient {
 
     telemetry(args: any): void {
         this.connection.sendNotification(lsp.TelemetryEventNotification.type, args);
+    }
+
+    registerCapability(args: lsp.RegistrationParams): void {
+        this.connection.sendRequest(lsp.RegistrationRequest.type, args);
     }
 
     async applyWorkspaceEdit(args: lsp.ApplyWorkspaceEditParams): Promise<lsp.ApplyWorkspaceEditResponse> {

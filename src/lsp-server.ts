@@ -26,6 +26,7 @@ import {
 } from './protocol-translation';
 import { getTsserverExecutable } from './utils';
 import { LspDocument } from './document';
+import { TextEdit, WillSaveTextDocumentParams, InitializedParams } from 'vscode-languageserver';
 
 export interface IServerOptions {
     logger: Logger
@@ -131,6 +132,16 @@ export class LspServer {
         return this.initializeResult;
     }
 
+    public initialized(params: InitializedParams) {
+        const regParams: lsp.RegistrationParams = {
+            registrations: [{
+                id: "reg-will-save-wait-until",
+                method: "textDocument/willSaveWaitUntil",
+            }]
+        };
+        this.options.lspClient.registerCapability(regParams);
+    }
+
     public requestDiagnostics(): Promise<tsp.RequestCompletedEvent> {
         const files: string[] = []
         // sort by least recently usage
@@ -214,6 +225,10 @@ export class LspServer {
 
     public didSaveTextDocument(params: lsp.DidChangeTextDocumentParams): void {
         // do nothing
+    }
+
+    public willSaveTextDocumentWaitUntil(params: WillSaveTextDocumentParams): TextEdit[] {
+        return [];
     }
 
     public async definition(params: lsp.TextDocumentPositionParams): Promise<lsp.Definition> {

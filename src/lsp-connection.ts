@@ -31,11 +31,13 @@ export function createLspConnection(options: IServerOptions): lsp.IConnection {
     });
 
     connection.onInitialize(server.initialize.bind(server));
+    connection.onInitialized(server.initialized.bind(server));
 
     connection.onDidOpenTextDocument(server.didOpenTextDocument.bind(server));
     connection.onDidSaveTextDocument(server.didSaveTextDocument.bind(server));
     connection.onDidCloseTextDocument(server.didCloseTextDocument.bind(server));
     connection.onDidChangeTextDocument(server.didChangeTextDocument.bind(server));
+    connection.onWillSaveTextDocumentWaitUntil(server.willSaveTextDocumentWaitUntil.bind(server));
 
     connection.onCodeAction(server.codeAction.bind(server));
     connection.onCompletion(server.completion.bind(server));
